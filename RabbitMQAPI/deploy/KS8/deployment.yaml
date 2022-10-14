@@ -1,0 +1,41 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata: 
+  name: "rabbitmq_api-deploy"
+  namespace: "rabbitmq_api-main"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "rabbitmq_api"
+      app.kubernetes.io/version: "1.0-SHAPSHOT"
+  template:
+    metadata:
+      app.kubernetes.io/name: "rabbitmq_api"
+      app.kubernetes.io/version: "1.0-SHAPSHOT"
+  spec:
+    dnsPolicy: ClusterFisrt
+    imagePullScreis:
+      - name: neitonjc/rabbitmq_api:latest
+    containers:
+      - env:
+        - name: SPRING_RABBITMQ_HOST
+          valeufrom:
+            fielRef:
+              fieldPath: status.hostID
+        image: docker.castrolanda.com.br/rabbitmq_api:#(Build.BuildNumber)#
+        imagePolicy: "Always"
+        name: "rabbitmq_api"
+        ports:
+          - containerPort: 8080
+            name: "http"
+            protocol: "TCP"
+        resources:
+          request:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+
+
